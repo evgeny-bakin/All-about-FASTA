@@ -27,8 +27,11 @@ if __name__ == "__main__":
     
     args.commas = analyse.count(',')
     
-    letters = ','.join(analyse)
-    args.letters = len(letters)
+    letter = []
+    letters_analyse = analyse.split()
+    for l in letters_analyse:
+        letter.append(len(l))
+    args.letters = sum(letter)
                    
     result = args.output
     
