@@ -25,28 +25,28 @@ if __name__ == "__main__":
     if os.path.exists(args.file.name):
         analyse = args.file.read()      
         
-    res = []
-    
-    if args.lines:
-        line = analyse.count('\n')
-        res.append(['lines', line])
-    
-    if args.words:
-        word = list(map(lambda analyse: len(analyse.split()), analyse.split()))
-        res.append(['words', len(word)])
-
-    if args.commas:
-        comma = len(list(filter(lambda analyse: ',' in analyse, analyse.split())))
-        res.append(['commas', comma])
+        res = []
         
-    if args.letters:  
-        letter = reduce(lambda x, y: x + y, [len(l) for l in analyse.split()])
-        res.append(['letters', letter])
+        if args.lines:
+            line = analyse.count('\n')
+            res.append(['lines', line])
+        
+        if args.words:
+            word = list(map(lambda analyse: len(analyse.split()), analyse.split()))
+            res.append(['words', len(word)])
     
-    result = args.output
-                
-    with open (result, 'w') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerows(res)
-           
-    print('The result was written into the file',result)
+        if args.commas:
+            comma = len(list(filter(lambda analyse: ',' in analyse, analyse.split())))
+            res.append(['commas', comma])
+            
+        if args.letters:  
+            letter = reduce(lambda x, y: x + y, [len(l) for l in analyse.split()])
+            res.append(['letters', letter])
+        
+        result = args.output
+                    
+        with open (result, 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerows(res)
+               
+        print('The result was written into the file',result)
