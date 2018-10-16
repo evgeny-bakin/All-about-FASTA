@@ -77,7 +77,8 @@ if __name__ == "__main__":
     all_functions = [item[0] for item in 
                             inspect.getmembers(module_evg, inspect.isfunction)] + [
                             item[0] for item in inspect.getmembers(module_alice, inspect.isfunction)] + [
-                            item[0] for item in inspect.getmembers(gc_fasta_analysis, inspect.isfunction)]
+                            item[0] for item in inspect.getmembers(gc_fasta_analysis, inspect.isfunction)] + [
+                            item[0] for item in inspect.getmembers(module_complement_sequence, inspect.isfunction)]
     
     print(all_functions)
     if args.function not in all_functions:
