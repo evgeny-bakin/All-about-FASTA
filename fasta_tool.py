@@ -5,7 +5,9 @@ from Bio import SeqIO
 import module_evg
 from module_evg import *
 import module_alice
+from module_alice import *
 import gc_fasta_analysis
+from gc_fasta_analysis import *
 
 def check_input_file(parser, file_name):
     full_file_name = os.path.abspath(file_name)
