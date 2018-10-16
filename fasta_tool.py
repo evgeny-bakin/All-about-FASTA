@@ -4,6 +4,8 @@ import inspect
 from Bio import SeqIO
 import module_evg
 from module_evg import *
+import module_alice
+import gc_fasta_analysis
 
 def check_input_file(parser, file_name):
     full_file_name = os.path.abspath(file_name)
@@ -69,8 +71,10 @@ if __name__ == "__main__":
     print("File type is {}.".format(file_type))
     
     all_functions = [item[0] for item in 
-                            inspect.getmembers(module_evg, inspect.isfunction)]
-                 
+                            inspect.getmembers(module_evg, inspect.isfunction)] + [
+                            item[0] for item in inspect.getmembers(module_alice, inspect.isfunction)] + [
+                            item[0] for item in inspect.getmembers(gc_fasta_analysis, inspect.isfunction)]
+    
     print(all_functions)
     if args.function not in all_functions:
         print("Function '{}' is unavailable!".format(args.function))
