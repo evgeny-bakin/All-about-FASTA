@@ -11,7 +11,7 @@ from Bio.Alphabet import IUPAC
 from Bio.SeqUtils import GC
 import csv
 
-def GC_analysis(args_input_file, args_output_file):
+def module_alena (args_input_file, args_output_file):
     if file_type == "fasta" or file_type == "fastq":
         dict = {}
         sequence = str(args_input_file)
