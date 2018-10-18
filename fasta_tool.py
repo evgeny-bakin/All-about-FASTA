@@ -6,8 +6,8 @@ import module_evg
 from module_evg import *
 import module_alice
 from module_alice import *
-import gc_fasta_analysis
-from gc_fasta_analysis import *
+import module_alena
+from module_alena import *
 import module_complement_sequence
 from module_complement_sequence import *
 
