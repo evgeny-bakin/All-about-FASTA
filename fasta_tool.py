@@ -8,8 +8,8 @@ import module_alice
 from module_alice import *
 import module_alena
 from module_alena import *
-import module_complement_sequence
-from module_complement_sequence import *
+import module_polina
+from module_polina import *
 
 def check_input_file(parser, file_name):
     full_file_name = os.path.abspath(file_name)
@@ -77,8 +77,8 @@ if __name__ == "__main__":
     all_functions = [item[0] for item in 
                             inspect.getmembers(module_evg, inspect.isfunction)] + [
                             item[0] for item in inspect.getmembers(module_alice, inspect.isfunction)] + [
-                            item[0] for item in inspect.getmembers(gc_fasta_analysis, inspect.isfunction)] + [
-                            item[0] for item in inspect.getmembers(module_complement_sequence, inspect.isfunction)]
+                            item[0] for item in inspect.getmembers(module_alena, inspect.isfunction)] + [
+                            item[0] for item in inspect.getmembers(module_polina, inspect.isfunction)]
     
     print(all_functions)
     if args.function not in all_functions:
