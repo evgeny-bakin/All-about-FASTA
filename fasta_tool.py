@@ -85,6 +85,6 @@ if __name__ == "__main__":
         print("Function '{}' is unavailable!".format(args.function))
         exit()
         
-    my_command = "{}('{}',{},{})".format(args.function, args.input_file, args.parameters, args.output_file)
+    my_command = "{}('{}','{}','{}')".format(args.function, args.input_file, args.parameters, args.output_file)
     print(my_command)
     exec(my_command)
