@@ -76,9 +76,12 @@ if __name__ == "__main__":
     
     all_functions = [item[0] for item in 
                             inspect.getmembers(module_evg, inspect.isfunction)] + [
-                            item[0] for item in inspect.getmembers(module_alice, inspect.isfunction)] + [
                             item[0] for item in inspect.getmembers(module_alena, inspect.isfunction)] + [
+                            item[0] for item in inspect.getmembers(module_alice, inspect.isfunction)] + [
                             item[0] for item in inspect.getmembers(module_polina, inspect.isfunction)]
+    
+    if args.output_file:
+        file = open((args.output_file), "a")
     
     print(all_functions)
     if args.function not in all_functions:
