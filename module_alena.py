@@ -11,11 +11,11 @@ from Bio.Alphabet import IUPAC
 from Bio.SeqUtils import GC
 import csv
 
-def module_alena (args_input_file, args_output_file):
+def gc_content_analysis (input_file, output_file):
     if file_type == "fasta" or file_type == "fastq":
         dict = {}
-        sequence = str(args_input_file)
-        analysis = args_output_file
+        sequence = str(input_file)
+        analysis = output_file
         my_seq = Seq(sequence, IUPAC.unambiguous_dna)
         gc_content = GC(my_seq)
         dict['GC-content'] = gc_content
