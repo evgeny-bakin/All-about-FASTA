@@ -37,25 +37,45 @@ def gc_content_analysis (input_file, output_file):
                 for key, value in dict.items():
                     result.writerow([key, value])
 
-#working on visualization of process now
+
+from Bio import SeqIO
+import time
+import progressbar
 def join_sequences(input_file, parameters, output_file):
     print('Reading your first file...')
+    print()
     with open(input_file, 'r'):
         record1 = {}
+        print('These sequences were identified as', file_type,':')
+        print()
         for record in SeqIO.parse(input_file, file_type):
+            print(record.description)
             record1[record.id] = record
     print('Reading your second file...')
+    print()
     with open(parameters, 'r'):
         record2 = {}
+        print('These sequences were identified as', file_type,':')
+        print()
         for record in SeqIO.parse(parameters, file_type):
+            print(record.description)
             record2[record.id] = record
+    print()
     print('Joining your files, please, wait...')
+    print()
     with open(output_file, 'w'):
         result = list(record1.values())
-        for k in record2:
-            if k not in record1:
-                result.append(record2[k])
-            else:
-                pass
+        bar = progressbar.ProgressBar().start()
+        for i in range(len(result)):
+            time.sleep(0.1)
+            bar.update(i)
+            for k in record2:
+                if k not in record1:
+                    result.append(record2[k])
+                else:
+                    pass
+        bar.finish()
+        print()
+        print('Writing joined files to a', output_file, 'file...')
         SeqIO.write(result, output_file, file_type)
     return
