@@ -29,19 +29,26 @@ def delete_reads_shorter(input_file, output_file, parameters):
         if file_type == 'fastq':
             reads_len = [len(seq_record.seq) for seq_record in SeqIO.parse(input_file, 'fastq')]
             reads_cnt = len(reads_len)
-            reads = {len(seq_record.seq): seq_record.seq for seq_record in SeqIO.parse(input_file, 'fastq')}
+            reads ={}
+            for seq_record in SeqIO.parse(input_file, 'fastq'):
+                if len(seq_record.seq) in reads:
+                    reads[len(seq_record.seq)].append(seq_record.seq)
+                else:
+                    reads.update({len(seq_record.seq): seq_record.seq})
             print('Found {} reads'.format(reads_cnt))
 
             print('\n Searching reads shorter then {} and writing them to the output file \n'.format(int(parameters)))
             pbar = progressbar.ProgressBar.start()
+
+            print('Deleting reads shorter then {}. This reads will be written to {}'.format(int(parameters), output_file))
             for i in range(reads_cnt):
                 time.sleep(0.1)
                 pbar.update(i)
                 for key in reads:
                     if key < int(parameters):
-                        print(reads[i], file = open(output_file, 'a')) #в выходной файл записываем отброшенные ридыи удаляем их из словаря
+                        print(reads[key], file = open(output_file, 'a')) #в выходной файл записываем отброшенные ридыи удаляем их из словаря
                         del reads[key]
-                print('Deleting reads shorter then {}'.format(int(parameters)))
+                print('Reads longer then {} are in {}'.format(int(parameters), input_file))
                 SeqIO.write(*reads.values(), input_file, file_type) #оставляем во входном файле только риды, длиннее Х
 
             pbar.finish()
