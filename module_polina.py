@@ -1,10 +1,11 @@
 import Bio
-import pandas
 import progressbar
+import time
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
 from progressbar import *
+from time import sleep
 
 def complement_reverse_sequence(input_file, output_file, file_type):
     
@@ -23,31 +24,28 @@ def complement_reverse_sequence(input_file, output_file, file_type):
 
 
 def delete_reads_shorter(input_file, output_file, parameters):
-
+    print('\n Reading your file... \n')
     with open(input_file, 'r'):
+        if file_type == 'fastq':
+            reads_len = [len(seq_record.seq) for seq_record in SeqIO.parse(input_file, 'fastq')]
+            reads_cnt = len(reads_len)
+            reads = {len(seq_record.seq): seq_record.seq for seq_record in SeqIO.parse(input_file, 'fastq')}
+            print('Found {} reads'.format(reads_cnt))
 
-        count_reads = len([len(seq_record.seq) for seq_record in SeqIO.parse(input_file, file_type)])
+            print('\n Searching reads shorter then {} and writing them to the output file \n'.format(int(parameters)))
+            pbar = progressbar.ProgressBar.start()
+            for i in range(reads_cnt):
+                time.sleep(0.1)
+                pbar.update(i)
+                for key in reads:
+                    if key < int(parameters):
+                        print(reads[i], file = open(output_file, 'a')) #в выходной файл записываем отброшенные ридыи удаляем их из словаря
+                        del reads[key]
+                print('Deleting reads shorter then {}'.format(int(parameters)))
+                SeqIO.write(*reads.values(), input_file, file_type) #оставляем во входном файле только риды, длиннее Х
 
-        for i in range(count_reads + 1):
-            widgets = ['Calculate length for each read in file...', Percentage(), ' ',
-                       Bar(marker='0', left='[', right=']'),
-                       ' ', ETA(), ' ', FileTransferSpeed()]
-            pbar1 = ProgressBar(widgets=widgets, maxval=count_reads)
-            pbar1.start()
-            reads = pd.Series(seq_record.seq for seq_record in SeqIO.parse(input_file, 'fasta'))
-            length_of_reads = reads.str.len()
-            pbar1.update(i)
-        pbar1.finish()
+            pbar.finish()
 
-        print('Search reads shorter than {}'.format(parameters), 'and creating otput file')
-        for i in range(length_of_reads):
-            widgets = ['Search reads shorter than {}'.format(parameters), 'and creating otput file', Percentage(), ' ',
-                       Bar(marker='0', left='[', right=']'),
-                       ' ', ETA(), ' ', FileTransferSpeed()]
-            pbar2 = ProgressBar(widgets=widgets, maxval = count_reads)
-            pbar2.start()
-            if length_of_reads[i] < int(parameters):
-                print(reads[i], file = open(output_file, 'w'))
-            pbar2.update(i)
-        pbar2.finish()
+        else:
+            print('Deleting reads shorter than X is possible for fastq files.')
     return
