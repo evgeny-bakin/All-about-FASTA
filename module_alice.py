@@ -6,6 +6,7 @@ import statistics
 import csv
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import progressbar as pb
 from Bio import SeqIO
 
@@ -39,35 +40,36 @@ def quality_score(input_file, output_file):
         if file_type == "fastq":
             print("Data exploring...")
             qualities = [seq_record.letter_annotations["phred_quality"] for seq_record in SeqIO.parse(input_file, file_type)]
-            max_read_length = max([len(seq_record.seq) for seq_record in SeqIO.parse(input_file, file_type)])
+            max_read_length = max([len(q) for q in qualities])
             base_numbers = [i for i in range(1,(max_read_length+1))]
             
-            timer_1 = pb.ProgressBar(widgets=widgets, maxval=(max_read_length+1)).start()
-            timer_2 = pb.ProgressBar(widgets=widgets, maxval=(len(qualities))).start()
+            per_base_qualities = np.zeros((max_read_length,), dtype=int)
+            per_base_quantities = np.zeros((max_read_length,), dtype=int)
+            
+            timer_1 = pb.ProgressBar(widgets=widgets, maxval=(len(qualities))).start()
     
-            per_base_qualities = {}
-            for i in range(1,(max_read_length+1)):
-                timer_1.update(i)
-                per_base_qualities['base'+str(i)] = []
-            timer_1.finish()
             for i in qualities:
                 counter+=1
-                timer_2.update(counter)
-                for j in range(1,(len(i)+1)):
-                    per_base_qualities['base'+str(j)].append(i[j-1]) 
-            timer_2.finish()
+                timer_1.update(counter)
+                for j in range(len(i)):
+                    per_base_qualities[j]+= i[j]
+                    per_base_quantities[j] += 1
+            
+            timer_1.finish()
             print("Counting the average quality...")
-            average_per_base_quality = [ int(statistics.mean(per_base_qualities[key])) for key in per_base_qualities]
+            average_per_base_quality = [int(i) for i in per_base_qualities/per_base_quantities]
             
             print("All calculations are finished. Drawing the plot...")
             plt.bar(base_numbers, average_per_base_quality, color=['green'])
             plt.xlabel("base number")
             plt.ylabel("average quality")
-            plt.xticks(range(0, max_read_length))
-            plt.yticks(range(0,65))
-            plt.show() 
+            plt.autoscale(enable=True, axis='both', tight=None)
+            plt.savefig('average_quality.png')
+            print("The plot has been saved as 'average_quality.png'")
+    
         else:
             print("Quality score function is available only for fastq files")
+            
     with open(output_file,'w') as output_file_1:
         writer = csv.writer(output_file_1, delimiter='\t',lineterminator='\n',)
         writer.writerow(['base number'] + base_numbers)
