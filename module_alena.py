@@ -11,6 +11,10 @@ from Bio.Alphabet import IUPAC
 from Bio.SeqUtils import GC
 from Bio import SeqIO
 import csv
+from Bio import SeqIO
+import time
+import progressbar
+from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 def gc_content_analysis (input_file, output_file):
     if file_type == "fasta" or file_type == "fastq":
@@ -38,44 +42,23 @@ def gc_content_analysis (input_file, output_file):
                     result.writerow([key, value])
 
 
-from Bio import SeqIO
-import time
-import progressbar
-def join_sequences(input_file, parameters, output_file):
+def join_sequences_seqio(input_file, parameters, output_file):
+    file_type = 'fasta'
     print('Reading your first file...')
     print()
+    result = tuple()
     with open(input_file, 'r'):
-        record1 = {}
-        print('These sequences were identified as', file_type,':')
-        print()
-        for record in SeqIO.parse(input_file, file_type):
-            print(record.description)
-            record1[record.id] = record
-    print('Reading your second file...')
-    print()
+        result = [seq_record for seq_record in SeqIO.parse(input_file, file_type) if seq_record.description not in result]
+        print('Reading your second file...')
     with open(parameters, 'r'):
-        record2 = {}
-        print('These sequences were identified as', file_type,':')
-        print()
-        for record in SeqIO.parse(parameters, file_type):
-            print(record.description)
-            record2[record.id] = record
-    print()
-    print('Joining your files, please, wait...')
-    print()
+        result = [seq_record for seq_record in SeqIO.parse(parameters, file_type) if seq_record.description not in result]
     with open(output_file, 'w'):
-        result = list(record1.values())
         bar = progressbar.ProgressBar().start()
         for i in range(len(result)):
-            time.sleep(0.1)
+            time.sleep(0.0)
             bar.update(i)
-            for k in record2:
-                if k not in record1:
-                    result.append(record2[k])
-                else:
-                    pass
-        bar.finish()
-        print()
+            bar.finish()
+            print()
         print('Writing joined files to a', output_file, 'file...')
         SeqIO.write(result, output_file, file_type)
     return
