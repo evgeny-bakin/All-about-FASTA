@@ -4,10 +4,12 @@ import time
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
+from Bio.SeqIO.QualityIO import FastqGeneralIterator
+from Bio.SeqIO.FastaIO import SimpleFastaParser
 from progressbar import *
 from time import sleep
 
-def complement_reverse_sequence(input_file, output_file, file_type):
+def complement_reverse_sequence(input_file, output_file):
     
     with open(input_file, 'r'):
         if file_type == "fasta" or "fastq":
@@ -23,36 +25,48 @@ def complement_reverse_sequence(input_file, output_file, file_type):
     return
 
 
-def delete_reads_shorter(input_file, output_file, parameters):
-    print('\n Reading your file... \n')
-    with open(input_file, 'r'):
-        if file_type == 'fastq':
-            reads_len = [len(seq_record.seq) for seq_record in SeqIO.parse(input_file, 'fastq')]
-            reads_cnt = len(reads_len)
-            reads ={}
-            for seq_record in SeqIO.parse(input_file, 'fastq'):
-                if len(seq_record.seq) in reads:
-                    reads[len(seq_record.seq)].append(seq_record.seq)
-                else:
-                    reads.update({len(seq_record.seq): seq_record.seq})
-            print('Found {} reads'.format(reads_cnt))
+def delete_reads_shorter_tuple(input_file, parameters, output_file, file_type):
 
-            print('\n Searching reads shorter then {} and writing them to the output file \n'.format(int(parameters)))
-            pbar = progressbar.ProgressBar.start()
+    #pbar = progressbar.ProgressBar.start()
 
-            print('Deleting reads shorter then {}. This reads will be written to {}'.format(int(parameters), output_file))
-            for i in range(reads_cnt):
-                time.sleep(0.1)
-                pbar.update(i)
-                for key in reads:
-                    if key < int(parameters):
-                        print(reads[key], file = open(output_file, 'a')) #в выходной файл записываем отброшенные ридыи удаляем их из словаря
-                        del reads[key]
-                print('Reads longer then {} are in {}'.format(int(parameters), input_file))
-                SeqIO.write(*reads.values(), input_file, file_type) #оставляем во входном файле только риды, длиннее Х
+    print('\nReading your file... \n')
+    sequence_hadle = SeqIO.parse(input_file, "{}".format(file_type))
 
-            pbar.finish()
+    #pbar.update()
 
-        else:
-            print('Deleting reads shorter than X is possible for fastq files.')
+    print('Searching reads shorter then {} \n'.format(int(parameters)))
+    long_reads = (seq_record for seq_record in sequence_hadle if len(seq_record.seq) > int(parameters))
+
+    #pbar.update()
+
+    print('Reads longer then {} are written to {} \n'.format(int(parameters), output_file))
+    SeqIO.write(long_reads, output_file, "{}".format(file_type))
+
+    #pbar.finish()
+
     return
+
+
+def delete_reads_shorter_fastiterator(input_file, parameters, output_file, file_type):
+    print('\nReading your file... \n')
+
+    handle = open(output_file, 'w')
+    print('Searching reads shorter then {} \n'.format(int(parameters)))
+
+    if file_type == "fastq":
+        for read in FastqGeneralIterator(open(input_file)):
+            handle.write(read if len(read) > int(parameters) else next(read))
+
+    else:
+        for read in SimpleFastaParser(open(input_file)):
+            handle.write(read if len(read) > int(parameters) else next(read))
+
+    handle.close()
+    print('Reads longer then {} are written to {} \n'.format(int(parameters), output_file))
+
+    return
+
+
+
+
+
