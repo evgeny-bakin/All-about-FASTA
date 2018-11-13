@@ -34,12 +34,12 @@ def delete_reads_shorter_tuple(input_file, parameters, output_file, file_type):
 
     #pbar.update()
 
-    print('Searching reads shorter then {} \n'.format(int(parameters)))
+    print('Searching reads shorter than {} \n'.format(int(parameters)))
     long_reads = (seq_record for seq_record in sequence_hadle if len(seq_record.seq) > int(parameters))
 
     #pbar.update()
 
-    print('Reads longer then {} are written to {} \n'.format(int(parameters), output_file))
+    print('Reads longer than {} are written to {} \n'.format(int(parameters), output_file))
     SeqIO.write(long_reads, output_file, "{}".format(file_type))
 
     #pbar.finish()
@@ -50,19 +50,17 @@ def delete_reads_shorter_tuple(input_file, parameters, output_file, file_type):
 def delete_reads_shorter_fastiterator(input_file, parameters, output_file, file_type):
     print('\nReading your file... \n')
 
-    handle = open(output_file, 'w')
-    print('Searching reads shorter then {} \n'.format(int(parameters)))
+    print('Searching reads shorter than {} \n'.format(int(parameters)))
 
     if file_type == "fastq":
-        for read in FastqGeneralIterator(open(input_file)):
-            handle.write(read if len(read) > int(parameters) else next(read))
+        long_reads = (read for read in FastqGeneralIterator(open(input_file)) if len(read) > int(parameters))
+        SeqIO.write(long_reads, output_file, "{}".format(file_type))
 
     else:
-        for read in SimpleFastaParser(open(input_file)):
-            handle.write(read if len(read) > int(parameters) else next(read))
+        long_reads = (seq for seq in SimpleFastaParser(open(input_file)) if len(seq) > int(parameters))
+        SeqIO.write(long_reads, output_file, "{}".format(file_type))
 
-    handle.close()
-    print('Reads longer then {} are written to {} \n'.format(int(parameters), output_file))
+    print('Reads longer than {} are written to {} \n'.format(int(parameters), output_file))
 
     return
 
