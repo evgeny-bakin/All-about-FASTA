@@ -48,10 +48,10 @@ def join_sequences_seqio(input_file, parameters, output_file):
     print()
     result = tuple()
     with open(input_file, 'r'):
-        result = [seq_record for seq_record in SeqIO.parse(input_file, file_type) if seq_record.description not in result]
+        result = (seq_record for seq_record in SeqIO.parse(input_file, file_type) if seq_record.description not in result)
         print('Reading your second file...')
     with open(parameters, 'r'):
-        result = [seq_record for seq_record in SeqIO.parse(parameters, file_type) if seq_record.description not in result]
+        result = (seq_record for seq_record in SeqIO.parse(parameters, file_type) if seq_record.description not in result)
     with open(output_file, 'w'):
         bar = progressbar.ProgressBar().start()
         for i in range(len(result)):
