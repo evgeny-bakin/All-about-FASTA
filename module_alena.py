@@ -42,23 +42,29 @@ def gc_content_analysis (input_file, output_file):
                     result.writerow([key, value])
 
 
-def join_sequences_seqio(input_file, parameters, output_file):
-    file_type = 'fasta'
+def join_sequences(input_file, file_type, parameters, output_file):
     print('Reading your first file...')
     print()
-    result = tuple()
     with open(input_file, 'r'):
-        result = (seq_record for seq_record in SeqIO.parse(input_file, file_type) if seq_record.description not in result)
-        print('Reading your second file...')
+        file1 = tuple(seq_record for seq_record in SeqIO.parse(input_file, file_type))
+        file1_set = {seq_record.name for seq_record in file1}
+    print('Reading your second file...')
+    print()
     with open(parameters, 'r'):
-        result = (seq_record for seq_record in SeqIO.parse(parameters, file_type) if seq_record.description not in result)
+        file2 = tuple(seq_record for seq_record in SeqIO.parse(parameters, file_type))
+        file2_set = {seq_record.name for seq_record in file2}
+    print('Writing joined files to a', output_file, 'file...')
+    result_set = file1_set.union(file2_set)
+    result_set = list(result_set)
+    result = []
+    for seq1, seq2 in file1, file2:
+        for i in result_set:
+            if seq1.name == i:
+                result.append(seq1)
+                result_set.remove(i)
+            elif seq2.name == i:
+                result.append(seq2)
+                result_set.remove(i)
     with open(output_file, 'w'):
-        bar = progressbar.ProgressBar().start()
-        for i in range(len(result)):
-            time.sleep(0.0)
-            bar.update(i)
-            bar.finish()
-            print()
-        print('Writing joined files to a', output_file, 'file...')
         SeqIO.write(result, output_file, file_type)
     return
