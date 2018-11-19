@@ -43,8 +43,8 @@ def quality_score(input_file, output_file):
     with open(input_file, "r"):
         if file_type == "fastq":
             print("Data exploring...")
-            qualities = [seq_record.letter_annotations["phred_quality"] for seq_record in
-                         SeqIO.parse(input_file, file_type)]
+            qualities = tuple([seq_record.letter_annotations["phred_quality"] for seq_record in
+                         SeqIO.parse(input_file, file_type)])
             max_read_length = max([len(q) for q in qualities])
             base_numbers = [i for i in range(1, (max_read_length + 1))]
 
@@ -59,11 +59,11 @@ def quality_score(input_file, output_file):
                 timer_1.update(counter)
                 i = np.asarray(i)
                 per_base_qualities[:len(i)] += i
-                per_base_quantities += add_one
+                per_base_quantities[:len(i)] += add_one[:len(i)]
 
             timer_1.finish()
             print("Counting the average quality...")
-            average_per_base_quality = [int(i) for i in per_base_qualities / per_base_quantities]
+            average_per_base_quality = per_base_qualities / per_base_quantities
             print(time.clock() - start_time, "seconds_calculations")
 
             print("All calculations are finished. Drawing the plot...")
@@ -74,13 +74,12 @@ def quality_score(input_file, output_file):
             plt.savefig('average_quality.png')
             print("The plot has been saved as 'average_quality.png'")
 
+            df_quality = pd.DataFrame(average_per_base_quality, base_numbers, columns=["average quality"])
+            df_quality.to_csv(output_file, sep='\t')
+
         else:
             print("Quality score function is available only for fastq files")
 
-    with open(output_file, 'w') as output_file_1:
-        writer = csv.writer(output_file_1, delimiter='\t', lineterminator='\n', )
-        writer.writerow(['base number'] + base_numbers)
-        writer.writerow(['average quality'] + average_per_base_quality)
 
     print("Time:", time.clock() - start_time, "seconds")
     return
