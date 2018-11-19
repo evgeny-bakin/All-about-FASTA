@@ -46,12 +46,20 @@ def delete_reads_shorter_fastiterator(input_file, parameters, output_file, file_
     print('Searching reads shorter than {} \n'.format(int(parameters)))
 
     if file_type == "fastq":
-        long_reads = (read for read in FastqGeneralIterator(open(input_file)) if len(read) > int(parameters))
-        SeqIO.write(long_reads, output_file, "{}".format(file_type))
+        handle = open(output_file, "w")
+        for title, seq, qual in FastqGeneralIterator(open(input_file)):
+            if len(seq) > int(parameters):
+                handle.write("@%s\n%s\n+\n%s\n" % (title, seq, qual))
+        handle.close()
 
     else:
-        long_reads = (seq for seq in SimpleFastaParser(open(input_file)) if len(seq) > int(parameters))
-        SeqIO.write(long_reads, output_file, "{}".format(file_type))
+        handle = open(output_file, "w")
+        for title, seq in SimpleFastaParser(open(input_file)):
+            if len(seq) > int(parameters):
+                handle.write("@%s\n%s\n" % (title, seq))
+        handle.close()
+       # long_reads = (seq for seq in SimpleFastaParser(open(input_file)) if len(seq) > int(parameters))
+        #SeqIO.write(long_reads, output_file, "{}".format(file_type))
 
     print('Reads longer than {} are written to {} \n'.format(int(parameters), output_file))
 
