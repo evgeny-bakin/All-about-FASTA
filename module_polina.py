@@ -27,22 +27,15 @@ def complement_reverse_sequence(input_file, output_file):
 
 def delete_reads_shorter_tuple(input_file, parameters, output_file, file_type):
 
-    #pbar = progressbar.ProgressBar.start()
-
     print('\nReading your file... \n')
     sequence_hadle = SeqIO.parse(input_file, "{}".format(file_type))
 
-    #pbar.update()
-
     print('Searching reads shorter than {} \n'.format(int(parameters)))
-    long_reads = (seq_record for seq_record in sequence_hadle if len(seq_record.seq) > int(parameters))
+    long_reads = tuple(seq_record for seq_record in sequence_hadle if len(seq_record.seq) > int(parameters))
 
-    #pbar.update()
 
-    print('Reads longer than {} are written to {} \n'.format(int(parameters), output_file))
     SeqIO.write(long_reads, output_file, "{}".format(file_type))
-
-    #pbar.finish()
+    print('Reads longer than {} are written to {} \n'.format(int(parameters), output_file))
 
     return
 
