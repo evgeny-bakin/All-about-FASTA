@@ -43,8 +43,22 @@ def quality_score(input_file, output_file):
     with open(input_file, "r"):
         if file_type == "fastq":
             print("Data exploring...")
-            qualities = tuple([seq_record.letter_annotations["phred_quality"] for seq_record in
-                         SeqIO.parse(input_file, file_type)])
+
+            if phred == "0" or "33":  #0 goes as an argument if phred hasn't been specified
+                encoding = "phred33"
+                num = 33
+            elif phred == "64":
+                encoding = "phred64"
+                num = 64
+            else:
+                print("Unsupportable encoding")
+
+            print("Encoding: {}".format(encoding))
+
+            qualities = []
+            for _, _, qual in FastqGeneralIterator(open(input_file)):
+                    qualities.append([ord(sym) - num for sym in qual])
+            qualities = tuple(qualities)
             max_read_length = max([len(q) for q in qualities])
             base_numbers = [i for i in range(1, (max_read_length + 1))]
 
