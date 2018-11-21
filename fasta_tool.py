@@ -1,6 +1,7 @@
 import argparse
 import os
 import inspect
+import time
 from Bio import SeqIO
 import module_evg
 from module_evg import *
@@ -88,6 +89,11 @@ if __name__ == "__main__":
         print("Function '{}' is unavailable!".format(args.function))
         exit()
         
-    my_command = "{}('{}','{}','{}')".format(args.function, args.input_file, args.parameters, args.output_file)
+    my_command = "{}('{}','{}','{}','{}')".format(args.function, args.input_file, args.parameters, args.output_file, file_type)
     print(my_command)
+
+    t_start = time.time()
     exec(my_command)
+    t_finish = time.time()
+    resulting_time = t_finish - t_start
+    print(resulting_time)
