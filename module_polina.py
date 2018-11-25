@@ -1,13 +1,12 @@
 import Bio
-import progressbar
-import time
+import memory_profiler
+from memory_profiler import profile
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from Bio.SeqIO.FastaIO import SimpleFastaParser
-from progressbar import *
-from time import sleep
+
 
 def complement_reverse_sequence(input_file, output_file):
     
@@ -63,6 +62,29 @@ def delete_reads_shorter_fastiterator(input_file, parameters, output_file, file_
 
     return
 
+
+def delete_reads_with_N(input_file, parameters, output_file, file_type):
+    print('\nReading your file... \n')
+
+    print('Searching reads containing N \n')
+
+    if file_type == "fastq":
+        handle = open(output_file, "w")
+        for title, seq, qual in FastqGeneralIterator(open(input_file)):
+            if 'N' not in seq:
+                handle.write("@%s\n%s\n+\n%s\n" % (title, seq, qual))
+        handle.close()
+
+    else:
+        handle = open(output_file, "w")
+        for title, seq in SimpleFastaParser(open(input_file)):
+            if 'N' not in seq:
+                handle.write("@%s\n%s\n" % (title, seq))
+        handle.close()
+
+    print('Reads containing N are written to {} \n'.format(output_file))
+
+    return
 
 
 
