@@ -42,7 +42,7 @@ def gc_content_analysis (input_file, output_file):
                     result.writerow([key, value])
 
 
-def join_sequences(input_file, file_type, parameters, output_file):
+def join_sequences(input_file, parameters, output_file, file_type):
     print('Reading your first file...')
     print()
     with open(input_file, 'r'):
@@ -54,17 +54,63 @@ def join_sequences(input_file, file_type, parameters, output_file):
         file2 = tuple(seq_record for seq_record in SeqIO.parse(parameters, file_type))
         file2_set = {seq_record.name for seq_record in file2}
     print('Writing joined files to a', output_file, 'file...')
-    result_set = file1_set.union(file2_set)
-    result_set = list(result_set)
-    result = []
-    for seq1, seq2 in file1, file2:
-        for i in result_set:
-            if seq1.name == i:
-                result.append(seq1)
-                result_set.remove(i)
-            elif seq2.name == i:
-                result.append(seq2)
-                result_set.remove(i)
+    second_unique_set = file2_set.difference(file1_set)
+    result = list()
+    for seq_record in file1:
+        if seq_record.name in file1_set:
+            result.append(seq_record)
+            file1_set.difference_update({seq_record.name})
+    for seq_record in file2:
+        if seq_record.name in second_unique_set:
+            result.append(seq_record)
+            second_unique_set.difference_update({seq_record.name})
+    with open(output_file, 'w'):
+        SeqIO.write(result, output_file, file_type)
+    return
+
+def overlap_sequences(input_file, parameters, output_file, file_type):
+    print('Reading your first file...')
+    print()
+    with open(input_file, 'r'):
+        file1 = tuple(seq_record for seq_record in SeqIO.parse(input_file, file_type))
+        file1_set = {seq_record.name for seq_record in file1}
+    print('Reading your second file...')
+    print()
+    with open(parameters, 'r'):
+        file2 = tuple(seq_record for seq_record in SeqIO.parse(parameters, file_type))
+        file2_set = {seq_record.name for seq_record in file2}
+    print('Writing joined files to a', output_file, 'file...')
+    overlapped_set = file2_set.intersection(file1_set)
+    result = list()
+    for seq_record in file1:
+        if seq_record.name in overlapped_set:
+            result.append(seq_record)
+            overlapped_set.difference_update({seq_record.name})
+    with open(output_file, 'w'):
+        SeqIO.write(result, output_file, file_type)
+    return
+def subtract_sequences(input_file, parameters, output_file, file_type):
+    print('Reading your first file...')
+    print()
+    with open(input_file, 'r'):
+        file1 = tuple(seq_record for seq_record in SeqIO.parse(input_file, file_type))
+        file1_set = {seq_record.name for seq_record in file1}
+    print('Reading your second file...')
+    print()
+    with open(parameters, 'r'):
+        file2 = tuple(seq_record for seq_record in SeqIO.parse(parameters, file_type))
+        file2_set = {seq_record.name for seq_record in file2}
+    print('Writing joined files to a', output_file, 'file...')
+    subtracted_set = file2_set.symmetric_difference(file1_set)
+    result = list()
+    for seq_record in file1:
+        if seq_record.name in subtracked_set:
+            result.append(seq_record)
+            subtracted_set.difference_update({seq_record.name})
+    for seq_record in file2:
+        if seq_record.name in subtracked_set:
+            result.append(seq_record)
+            subtracted_set.difference_update({seq_record.name})
     with open(output_file, 'w'):
         SeqIO.write(result, output_file, file_type)
     return
