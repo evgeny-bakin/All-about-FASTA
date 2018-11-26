@@ -1,4 +1,5 @@
 import Bio
+import re
 import memory_profiler
 from memory_profiler import profile
 from Bio import SeqIO
@@ -87,5 +88,27 @@ def delete_reads_with_N(input_file, parameters, output_file, file_type):
     return
 
 
+def delete_motif(input_file, parameters, output_file, file_type):
+    print('\nReading your file... \n')
+
+    print('Searching reads containing motif {} \n'.format(parameters))
+
+    if file_type == "fastq":
+        handle = open(output_file, "w")
+        for title, seq, qual in FastqGeneralIterator(open(input_file)):
+            if not re.findall(r'{}'.format(parameters), seq):
+                handle.write("@%s\n%s\n+\n%s\n" % (title, seq, qual))
+        handle.close()
+
+    else:
+        handle = open(output_file, "w")
+        for title, seq in SimpleFastaParser(open(input_file)):
+            if not re.findall(r'{}'.format(parameters), seq):
+                handle.write("@%s\n%s\n" % (title, seq))
+        handle.close()
+
+    print('Reads containing motif {} are written to {} \n'.format(parameters, output_file))
+
+    return
 
 
