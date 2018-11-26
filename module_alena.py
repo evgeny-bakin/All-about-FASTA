@@ -68,4 +68,25 @@ def join_sequences(input_file, parameters, output_file, file_type):
         SeqIO.write(result, output_file, file_type)
     return
 
+def overlap_sequences(input_file, parameters, output_file, file_type):
+    print('Reading your first file...')
+    print()
+    with open(input_file, 'r'):
+        file1 = tuple(seq_record for seq_record in SeqIO.parse(input_file, file_type))
+        file1_set = {seq_record.name for seq_record in file1}
+    print('Reading your second file...')
+    print()
+    with open(parameters, 'r'):
+        file2 = tuple(seq_record for seq_record in SeqIO.parse(parameters, file_type))
+        file2_set = {seq_record.name for seq_record in file2}
+    print('Writing joined files to a', output_file, 'file...')
+    overlapped_set = file2_set.intersection(file1_set)
+    result = list()
+    for seq_record in file1:
+        if seq_record.name in overlapped_set:
+            result.append(seq_record)
+            file1_set.difference_update({seq_record.name})
+    with open(output_file, 'w'):
+        SeqIO.write(result, output_file, file_type)
+    return
 
