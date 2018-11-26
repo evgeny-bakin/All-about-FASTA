@@ -96,14 +96,14 @@ def delete_motif(input_file, parameters, output_file, file_type):
     if file_type == "fastq":
         handle = open(output_file, "w")
         for title, seq, qual in FastqGeneralIterator(open(input_file)):
-            if not re.findall(r'{}'.format(parameters), seq):
+            if not re.findall(r'{}'.format(parameters.upper()), seq):
                 handle.write("@%s\n%s\n+\n%s\n" % (title, seq, qual))
         handle.close()
 
     else:
         handle = open(output_file, "w")
         for title, seq in SimpleFastaParser(open(input_file)):
-            if not re.findall(r'{}'.format(parameters), seq):
+            if not re.findall(r'{}'.format(parameters.upper()), seq):
                 handle.write("@%s\n%s\n" % (title, seq))
         handle.close()
 
