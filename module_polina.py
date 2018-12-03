@@ -40,7 +40,7 @@ def delete_reads_shorter_tuple(input_file, parameters, output_file, file_type):
     return
 
 
-def delete_reads_shorter_fastiterator(input_file, parameters, output_file, file_type):
+def min_length(input_file, parameters, output_file, file_type):
     print('\nReading your file... \n')
 
     print('Searching reads shorter than {} \n'.format(int(parameters)))
@@ -64,7 +64,7 @@ def delete_reads_shorter_fastiterator(input_file, parameters, output_file, file_
     return
 
 
-def delete_reads_with_N(input_file, parameters, output_file, file_type):
+def delete_N(input_file, parameters, output_file, file_type):
     print('\nReading your file... \n')
 
     print('Searching reads containing N \n')
@@ -112,7 +112,7 @@ def delete_motif(input_file, parameters, output_file, file_type):
     return
 
 
-def delete_duplicates(input_file, parameters, output_file, file_type):
+def deduplicate(input_file, parameters, output_file, file_type):
     print('Reading your file... \n')
 
     with open(input_file, 'r'):
@@ -135,5 +135,46 @@ def delete_duplicates(input_file, parameters, output_file, file_type):
     return
 
 
+def min_quality(input_file, parameters, output_file, file_type):
 
+    """
+    В параметре через двоеточия последовательно передаются - минимальньное качество, доля оснований в процентах, phred,
+    e.g. 20:30:33
+    """
 
+    if file_type == "fastq":
+
+        print('Reading your file... \n')
+
+        print("Searching poor quality reads \n")
+
+        cmd = parameters.split(":")
+        min_quality = float(cmd[0])
+        bases_ratio = float(cmd[1])
+        phred = cmd[2]
+
+        if phred == "phred33":
+            n = 33
+
+        elif phred == "phred64":
+            n = 64
+
+        else:
+            raise ValueError("Your phred is not correct. We work with phred33 or phred64")
+
+        handle = open(output_file, "w")
+        for title, seq, qual in FastqGeneralIterator(open(input_file)):
+            counter = 0
+            for sym in qual:
+                if ord(sym) - n >= min_quality:
+                    counter += 1
+            if counter*100/len(qual) >= bases_ratio:
+                handle.write("@%s\n%s\n+\n%s\n" % (title, seq, qual))
+        handle.close()
+
+        print(f"Reads with quality better {min_quality} are written to {output_file}")
+
+    else:
+        print("\n Deleting poor_quality reads available only for fastq")
+
+    return
