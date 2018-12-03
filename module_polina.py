@@ -107,6 +107,33 @@ def delete_motif(input_file, parameters, output_file, file_type):
                 handle.write("@%s\n%s\n" % (title, seq))
         handle.close()
 
-    print('Reads containing motif {} are written to {} \n'.format(parameters, output_file))
+    print('Reads without motif {} are written to {} \n'.format(parameters, output_file))
 
     return
+
+
+def delete_duplicates(input_file, parameters, output_file, file_type):
+    print('Reading your file... \n')
+
+    with open(input_file, 'r'):
+        reads = tuple(seq_record for seq_record in SeqIO.parse(input_file, file_type))
+        reads_set = {seq_record.name for seq_record in reads}
+
+    print("Searching duplicates \n")
+
+    result = list()
+    for seq_record in reads:
+        if seq_record.name in reads_set:
+            result.append(seq_record)
+            reads_set.difference_update({seq_record.name})
+
+    with open(output_file, 'w'):
+        SeqIO.write(result, output_file, file_type)
+
+    print(f"Data without duplicates are written to {output_file} \n")
+
+    return
+
+
+
+
