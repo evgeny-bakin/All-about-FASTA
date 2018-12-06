@@ -1,6 +1,5 @@
 import unittest
 import os
-import fasta_tool
 import module_polina
 from Bio import SeqIO
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
