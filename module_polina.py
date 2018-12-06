@@ -56,7 +56,7 @@ def min_length(input_file, parameters, output_file, file_type):
         handle = open(output_file, "w")
         for title, seq in SimpleFastaParser(open(input_file)):
             if len(seq) >= int(parameters):
-                handle.write("@%s\n%s\n" % (title, seq))
+                handle.write(">%s\n%s\n" % (title, seq))
         handle.close()
 
     print('Reads longer than {} are written to {} \n'.format(int(parameters), output_file))
@@ -80,7 +80,7 @@ def delete_N(input_file, parameters, output_file, file_type):
         handle = open(output_file, "w")
         for title, seq in SimpleFastaParser(open(input_file)):
             if 'N' not in seq.upper():
-                handle.write("@%s\n%s\n" % (title, seq))
+                handle.write(">%s\n%s\n" % (title, seq))
         handle.close()
 
     print('Reads containing N are written to {} \n'.format(output_file))
@@ -104,7 +104,7 @@ def delete_motif(input_file, parameters, output_file, file_type):
         handle = open(output_file, "w")
         for title, seq in SimpleFastaParser(open(input_file)):
             if not re.findall(r'{}'.format(parameters.upper()), seq.upper()):
-                handle.write("@%s\n%s\n" % (title, seq))
+                handle.write(">%s\n%s\n" % (title, seq))
         handle.close()
 
     print('Reads without motif {} are written to {} \n'.format(parameters, output_file))
@@ -139,7 +139,7 @@ def min_quality(input_file, parameters, output_file, file_type):
 
     """
     В параметре через двоеточия последовательно передаются - минимальньное качество, доля оснований в процентах, phred,
-    e.g. 20:30:33
+    e.g. 20:30:phred33
     """
 
     if file_type == "fastq":
