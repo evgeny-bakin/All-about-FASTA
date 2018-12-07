@@ -115,20 +115,25 @@ def delete_motif(input_file, parameters, output_file, file_type):
 def deduplicate(input_file, parameters, output_file, file_type):
     print('Reading your file... \n')
 
-    with open(input_file, 'r'):
-        reads = tuple(seq_record for seq_record in SeqIO.parse(input_file, file_type))
-        reads_set = {seq_record.name for seq_record in reads}
-
     print("Searching duplicates \n")
 
-    result = list()
-    for seq_record in reads:
-        if seq_record.name in reads_set:
-            result.append(seq_record)
-            reads_set.difference_update({seq_record.name})
+    if file_type == "fastq":
+        reads_set = {title for title, seq, qual in FastqGeneralIterator(open(input_file))}
+        handle = open(output_file, "w")
+        for title, seq, qual in FastqGeneralIterator(open(input_file)):
+            if title in reads_set:
+                handle.write("@%s\n%s\n+\n%s\n" % (title, seq, qual))
+                reads_set.remove(title)
+        handle.close()
 
-    with open(output_file, 'w'):
-        SeqIO.write(result, output_file, file_type)
+    else:
+        reads_set = {title for title, seq in SimpleFastaParser(open(input_file))}
+        handle = open(output_file, "w")
+        for title, seq in SimpleFastaParser(open(input_file)):
+            if title in reads_set:
+                handle.write(">%s\n%s\n" % (title, seq))
+                reads_set.remove(title)
+        handle.close()
 
     print(f"Data without duplicates are written to {output_file} \n")
 
