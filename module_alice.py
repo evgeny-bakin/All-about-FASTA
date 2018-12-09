@@ -12,7 +12,7 @@ from Bio import SeqIO
 import time
 
 
-basic_statistics(input_file, output_mode = "quiet", output_file = "basic_statistics.csv"):def fast_report(input_file, output_file, output_mode="quiet"):
+def basic_statistics(input_file, output_mode = "quiet", output_file = "basic_statistics.csv"):
 
     with open(input_file, "r"):
         read_length = [len(seq_record.seq) for seq_record in SeqIO.parse(input_file, file_type)]
@@ -91,7 +91,7 @@ def quality_score(input_file, output_file):
             plt.bar(base_numbers, average_per_base_quality, color=['green'])
             plt.xlabel("base number")
             plt.ylabel("average quality")
-            plt.autoscale(enable=True, axis='both', tight=None)
+            plt.autoscale(enable = True, axis='both', tight = None)
             plt.savefig('average_quality.png')
             print("The plot has been saved as 'average_quality.png'")
 
@@ -104,3 +104,29 @@ def quality_score(input_file, output_file):
 
     print("Time:", time.clock() - start_time, "seconds")
     return
+
+# the following function has been written by Alena Kizenko
+def gc_content_analysis (input_file, output_file):
+    if file_type == "fasta" or file_type == "fastq":
+        dict = {}
+        sequence = str(input_file)
+        analysis = output_file
+        my_seq = Seq(sequence, IUPAC.unambiguous_dna)
+        gc_content = GC(my_seq)
+        dict['GC-content'] = gc_content
+        print('GC content of analysed sequence is', round(gc_content, 2), '%')
+        if gc_content < 50:
+            return
+        else:
+            square = Seq(sequence).count('GG')
+            dict['Number of "GG" motifs'] = square
+            if square >= 4:
+                print('G-quadruplex structures can be found in analysed sequence!')
+                dict['3D structures occurence'] = 'TRUE'
+            else:
+                dict['3D structures occurence'] = 'FALSE'
+                return
+        with open(analysis, 'w') as csvFile:
+                result = csv.writer(csvFile, delimiter = ',')
+                for key, value in dict.items():
+                    result.writerow([key, value])
