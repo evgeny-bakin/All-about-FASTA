@@ -41,25 +41,31 @@ def delete_reads_shorter_tuple(input_file, parameters, output_file, file_type):
 
 
 def min_length(input_file, parameters, output_file, file_type):
-    print('\nReading your file... \n')
 
-    print('Searching reads shorter than {} \n'.format(int(parameters)))
+    try:
+        p = int(parameters)
+        print('\nReading your file... \n')
 
-    if file_type == "fastq":
-        handle = open(output_file, "w")
-        for title, seq, qual in FastqGeneralIterator(open(input_file)):
-            if len(seq) >= int(parameters):
-                handle.write("@%s\n%s\n+\n%s\n" % (title, seq, qual))
-        handle.close()
+        print('Searching reads shorter than {} \n'.format(int(p)))
 
-    else:
-        handle = open(output_file, "w")
-        for title, seq in SimpleFastaParser(open(input_file)):
-            if len(seq) >= int(parameters):
-                handle.write(">%s\n%s\n" % (title, seq))
-        handle.close()
+        if file_type == "fastq":
+            handle = open(output_file, "w")
+            for title, seq, qual in FastqGeneralIterator(open(input_file)):
+                if len(seq) >= int(p):
+                    handle.write("@%s\n%s\n+\n%s\n" % (title, seq, qual))
+            handle.close()
 
-    print('Reads longer than {} are written to {} \n'.format(int(parameters), output_file))
+        else:
+            handle = open(output_file, "w")
+            for title, seq in SimpleFastaParser(open(input_file)):
+                if len(seq) >= int(p):
+                    handle.write(">%s\n%s\n" % (title, seq))
+            handle.close()
+
+        print('Reads longer than {} are written to {} \n'.format(int(p), output_file))
+
+    except ValueError:
+        print("Your value of min length is not correct. Expected number")
 
     return
 
@@ -89,7 +95,9 @@ def delete_N(input_file, parameters, output_file, file_type):
 
 
 def delete_motif(input_file, parameters, output_file, file_type):
-    print('\nReading your file... \n')
+    pattern = re.compile(r'[AaTtCcGg]+')
+    if not pattern.fullmatch(parameters):
+        raise ValueError('Motif must include only ATGC bases and must be non 0')
 
     print('Searching reads containing motif {} \n'.format(parameters))
 
@@ -107,7 +115,7 @@ def delete_motif(input_file, parameters, output_file, file_type):
                 handle.write(">%s\n%s\n" % (title, seq))
         handle.close()
 
-    print('Reads without motif {} are written to {} \n'.format(parameters, output_file))
+        print('Reads without motif {} are written to {} \n'.format(parameters, output_file))
 
     return
 
@@ -146,38 +154,37 @@ def min_quality(input_file, parameters, output_file, file_type):
     В параметре через двоеточия последовательно передаются - минимальньное качество, доля оснований в процентах, phred,
     e.g. 20:30:phred33
     """
+    cmd = parameters.split(":")
+    phred = cmd[2]
+    if phred == "phred33":
+        n = 33
+
+    elif phred == "phred64":
+        n = 64
+
+    else:
+        raise ValueError("Your phred is not correct. We work with phred33 or phred64")
 
     if file_type == "fastq":
-
-        print('Reading your file... \n')
-
-        print("Searching poor quality reads \n")
-
         cmd = parameters.split(":")
-        min_quality = float(cmd[0])
-        bases_ratio = float(cmd[1])
-        phred = cmd[2]
+        try:
+            min_quality = float(cmd[0])
+            bases_ratio = float(cmd[1])
 
-        if phred == "phred33":
-            n = 33
+            handle = open(output_file, "w")
+            for title, seq, qual in FastqGeneralIterator(open(input_file)):
+                counter = 0
+                for sym in qual:
+                    if ord(sym) - n >= min_quality:
+                        counter += 1
+                if counter * 100 / len(qual) >= bases_ratio:
+                    handle.write("@%s\n%s\n+\n%s\n" % (title, seq, qual))
+            handle.close()
 
-        elif phred == "phred64":
-            n = 64
+            print(f"Reads with quality better {min_quality} are written to {output_file}")
 
-        else:
-            raise ValueError("Your phred is not correct. We work with phred33 or phred64")
-
-        handle = open(output_file, "w")
-        for title, seq, qual in FastqGeneralIterator(open(input_file)):
-            counter = 0
-            for sym in qual:
-                if ord(sym) - n >= min_quality:
-                    counter += 1
-            if counter*100/len(qual) >= bases_ratio:
-                handle.write("@%s\n%s\n+\n%s\n" % (title, seq, qual))
-        handle.close()
-
-        print(f"Reads with quality better {min_quality} are written to {output_file}")
+        except ValueError:
+            print("Your min quality or bases ratio value is not correct. Numbers expected")
 
     else:
         print("\n Deleting poor_quality reads available only for fastq")
