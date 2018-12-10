@@ -4,7 +4,7 @@ Bioinformatics institute, Autumn-2018. Development of a tool for FASTA/FASTQ pro
 
 ## Module Filtering
 This module is developed for quick filtering of fasta/fastq files. 
-* **min_length** allows delete reads with length shorter then X. Good reads will be written to the new file.
+* **min_length** allows delete reads with length less then X. Good reads will be written into the new file.
 
     example of usage:
     
@@ -16,7 +16,7 @@ This module is developed for quick filtering of fasta/fastq files.
     
     `-o` name of output file where will be written reads with length equal or longer then X (default 0)
     
-* **delete_N** allows delete reads containing unknown nucleotide N. 
+* **delete_N** allows delete reads which contain unknown nucleotide N. 
 
     `python3 fasta_tool.py -i <input file> -f delete_N -o <output file>`
     
@@ -24,7 +24,7 @@ This module is developed for quick filtering of fasta/fastq files.
     
     `-o` name of output file where will be written reads without unknown nucleotides
     
-* **delete_motif**  allows delete reads containing a given motif
+* **delete_motif**  allows delete reads which contain a given motif
 
     `python3 fasta_tool.py -i <input file> -f delete_motif -p <motif> -o <output file>`
     
@@ -48,7 +48,9 @@ This module is developed for quick filtering of fasta/fastq files.
     
     `-i` path to fasta or fastq file with raw data
     
-    `-p` necessary three parameters passed through "**:**". The first is a value of minimal quality per base. The second is a value of bases ratio with quality more or equal then first number. The third is a value of phred (33 or 64 avaliable).
+    `-p` three necessary parameters passed through "**:**". The first is a value of minimal quality per base. 
+    The second is a value of bases ratio with quality more or equal then first number. 
+    The third is a value of phred (33 or 64 avaliable).
     e.g. "32:80:phred33", "30:85:phred64" etc. 
     
     `-o` name of output file where will be written reads with good quality
