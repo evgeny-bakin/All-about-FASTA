@@ -130,3 +130,52 @@ def gc_content_analysis (input_file, output_file):
                 result = csv.writer(csvFile, delimiter = ',')
                 for key, value in dict.items():
                     result.writerow([key, value])
+
+
+
+# parameters(optional) should include either treshold (minimal contig length used for calculation) - one figure or metric's name(N50/NA50),genome_size and (optionally) treshold  . Example - NA50:100000:150
+
+def n50(input_file, parameters, output_file = "quality_metrics.txt"):
+
+    metric = "N50"
+    treshold = 0
+
+    if parameters != "0":
+        parameters = parameters.split(":")
+        if len(parameters) == 1:
+            treshold = int(parameters[0])
+        else:
+            metric = parameters[0]
+            genome_size = int(parameters[1])
+            if len(parameters) == 3:
+                treshold = int(parameters[2])
+
+
+    contig_length = [len(seq_record.seq) for seq_record in SeqIO.parse(input_file, file_type)]
+    contig_length = sorted(contig_length)[::-1]
+    count_contigs = len(contig_length)
+    print("Total number of contigs: {}".format(count_contigs))
+
+    if metric == "NA50":
+        total_length = genome_size
+    else:
+        total_length = sum(contig_length)
+
+    half_length = total_length/2
+    summ = 0
+
+    for i in contig_length:
+        if i > treshold:
+            while summ < half_length:
+                summ+=i
+            if summ >= half_length:
+                print("{}: {}".format(metric,i))
+                print("\n", "Assembly quality assessment for {}".format(input_file), "\n"
+                "{}: {}".format(metric, i),
+                file=open(output_file, "a"))
+                break
+
+            print("The report has been saved to {}".format(output_file))
+
+
+
