@@ -1,43 +1,8 @@
 import Bio
 import re
-import memory_profiler
-from memory_profiler import profile
 from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from Bio.SeqIO.FastaIO import SimpleFastaParser
-
-
-def complement_reverse_sequence(input_file, output_file):
-    
-    with open(input_file, 'r'):
-        if file_type == "fasta" or "fastq":
-            for seq_record in SeqIO.parse(input_file, file_type):
-                sequence = str(repr(input_file))
-    
-                complement_sequence = Seq(sequence, IUPAC.unambiguous_dna).complement()
-                reverse_complement_sequence = Seq(sequence, IUPAC.unambiguous_dna).reverse_complement()
-        
-                print('Complement sequence is: \n', complement_sequence, file = open(output_file, 'a'))
-                print('Reverse complement sequence is: \n', reverse_complement_sequence, file = open(output_file, 'a'))
-    
-    return
-
-
-def delete_reads_shorter_tuple(input_file, parameters, output_file, file_type):
-
-    print('\nReading your file... \n')
-    sequence_hadle = SeqIO.parse(input_file, "{}".format(file_type))
-
-    print('Searching reads shorter than {} \n'.format(int(parameters)))
-    long_reads = tuple(seq_record for seq_record in sequence_hadle if len(seq_record.seq) >= int(parameters))
-
-
-    SeqIO.write(long_reads, output_file, "{}".format(file_type))
-    print('Reads longer than {} are written to {} \n'.format(int(parameters), output_file))
-
-    return
 
 
 def min_length(input_file, parameters, output_file, file_type):
@@ -149,11 +114,6 @@ def deduplicate(input_file, parameters, output_file, file_type):
 
 
 def min_quality(input_file, parameters, output_file, file_type):
-
-    """
-    В параметре через двоеточия последовательно передаются - минимальньное качество, доля оснований в процентах, phred,
-    e.g. 20:30:phred33
-    """
     cmd = parameters.split(":")
     phred = cmd[2]
     if phred == "phred33":
