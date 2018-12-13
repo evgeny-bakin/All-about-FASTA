@@ -1,6 +1,15 @@
-# All-about-FASTA
-Bioinformatics institute, Autumn-2018. Development of a tool for FASTA/FASTQ processing.
+# breakFAST
+Development of a tool for FASTA/FASTQ processing.
+Bioinformatics institute, Autumn-2018.
+## Usage
 
+`python3 ./breakFAST.py -i <input file> -f <function> -p <parameters> -o <output_file>`
+
+## Optional arguments
+`-i, --input         Path to fasta/fastq file
+ -f, --function      Name of chosen function
+ -p, --parameters    Desired parameters
+ -o, --output        Path to output file`
 
 ## Module Filtering
 This module is developed for quick filtering of fasta/fastq files. 
@@ -65,24 +74,24 @@ This module is developed for quick filtering of fasta/fastq files.
    
    `-p` path to second fasta or fastq file
    
-   `-o` path to output file where result set of sequences will be stored
+   `-o` path to output file where result set of joined sequences will be stored
    
    * **overlap_sequences** allows to overlap two fasta/fastq files and find sequences, which are the same for both files
    
-   `python3 fasta_tool.py -i <first file> -f join_sequences -p <second file> -o <output file>`
+   `python3 fasta_tool.py -i <first file> -f overlap_sequences -p <second file> -o <output file>`
    
    `-i` path to first fasta or fastq file
    
    `-p` path to second fasta or fastq file
    
-   `-o` path to output file where result set of sequences will be stored
+   `-o` path to output file where result set of overlapped sequences will be stored
    
    * **subtract_sequences** allows to subtract two fasta/fastq files in one and find unique sequences for each file
    
-   `python3 fasta_tool.py -i <first file> -f join_sequences -p <second file> -o <output file>`
+   `python3 fasta_tool.py -i <first file> -f subtract_sequences -p <second file> -o <output file>`
    
    `-i` path to first fasta or fastq file
    
    `-p` path to second fasta or fastq file
    
-   `-o` path to output file where result set of sequences will be stored
+   `-o` path to output file where result set of subtracted sequences will be stored
