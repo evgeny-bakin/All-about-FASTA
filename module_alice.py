@@ -13,6 +13,7 @@ from Bio.Alphabet import IUPAC
 from Bio.SeqUtils import GC
 from Bio import SeqIO
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
+from Bio.SeqIO.FastaIO import SimpleFastaParser
 import time
 
 
@@ -27,7 +28,7 @@ def basic_statistics(input_file, output_mode, output_file, file_type):
         mode_percent = (read_length.count(read_mode) / count_reads) * 100
 
         if count_reads == 1:
-            print("Length:", read_length, file = open(output_file, "a"))
+            print("Length:", read_length, file = open(output_file, "w"))
             if output_mode == "verbose":
                 print("There is one sequence in your file. The sequence length is {}".format(read_length[0]))
         else:
@@ -37,7 +38,7 @@ def basic_statistics(input_file, output_mode, output_file, file_type):
                   "Average length:", round(read_mean, 2), "\n"
                   "Prevailing length:", read_mode, "({}%)".format(round(mode_percent, 1)), "\n"
                   "Total length:", total_length,
-                   file = open(output_file, "a"))
+                   file = open(output_file, "w"))
             if output_mode == "verbose":
                 print("The file contains {} reads. The read lengths range from {} to {}. The most frequent length is {} ({}% of all reads). The total length is {}.".format(count_reads,
                 min(read_length), max(read_length), statistics.mode(read_length), round(mode_percent, 1), total_length))
@@ -148,6 +149,7 @@ def gc_content_analysis(input_file, parameters, output_file, file_type):
                         writer.writerow(
                             {'Sequence_ID': title, 'GC-content': gc_content, '3D structures occurence': 'FALSE'})
                 average_GC = total_GC / total_length * 100
+                average_GC = round(average_GC, 2)
                 writer.writerow({'Sequence_ID': 'Average_GC', 'GC-content': average_GC})
 
 
