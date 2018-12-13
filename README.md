@@ -99,9 +99,11 @@ This module is developed for quick filtering of fasta/fastq files.
    
    `-o` path to output file where result set of subtracted sequences will be stored
    
-   ## Contributors\
+   ### Contributors
    
    This tool was developed by Alena Kizenko\[1], Alice Morshneva\[1] and Polina Pavlova\[1] under supervision of Evgeny Bakin\[2].
+   
    \[1] Saint-Petersburg State University, Saint-Petersburg, Russia
+   
    \[2] Bioinformatics institute, Saint-Petersburg, Russia
    
