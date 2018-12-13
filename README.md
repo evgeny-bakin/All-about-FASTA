@@ -54,4 +54,35 @@ This module is developed for quick filtering of fasta/fastq files.
     e.g. "32:80:phred33", "30:85:phred64" etc. 
     
     `-o` name of output file where will be written reads with good quality
+   ## Module Matching
+   This module has been developed for quick matching fasta/fastq files.
    
+   * **join_sequences** allows to join two fasta/fastq files in one and remove duplicates, in case they occur
+   
+   `python3 fasta_tool.py -i <first file> -f join_sequences -p <second file> -o <output file>`
+   
+   `-i` path to first fasta or fastq file
+   
+   `-p` path to second fasta or fastq file
+   
+   `-o` path to output file where result set of sequences will be stored
+   
+   * **overlap_sequences** allows to overlap two fasta/fastq files and find sequences, which are the same for both files
+   
+   `python3 fasta_tool.py -i <first file> -f join_sequences -p <second file> -o <output file>`
+   
+   `-i` path to first fasta or fastq file
+   
+   `-p` path to second fasta or fastq file
+   
+   `-o` path to output file where result set of sequences will be stored
+   
+   * **subtract_sequences** allows to subtract two fasta/fastq files in one and find unique sequences for each file
+   
+   `python3 fasta_tool.py -i <first file> -f join_sequences -p <second file> -o <output file>`
+   
+   `-i` path to first fasta or fastq file
+   
+   `-p` path to second fasta or fastq file
+   
+   `-o` path to output file where result set of sequences will be stored
