@@ -13,7 +13,8 @@ Bioinformatics institute, Autumn-2018.
  
  -p, --parameters   Desired parameters
  
- -o, --output       Path to output file````
+ -o, --output       Path to output file
+ ````
 
 ## Module Filtering
 This module is developed for quick filtering of fasta/fastq files. 
