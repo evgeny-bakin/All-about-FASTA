@@ -1,7 +1,6 @@
 import argparse
 import os
 import inspect
-import time
 from Bio import SeqIO
 import basic_statistics
 from basic_statistics import *
@@ -73,9 +72,7 @@ if __name__ == "__main__":
     file_type = check_file_format(args.input_file)
     print("File type is {}.".format(file_type))
     
-    all_functions = [item[0] for item in 
-                            inspect.getmembers(module_evg, inspect.isfunction)] + [
-                            item[0] for item in inspect.getmembers(matching, inspect.isfunction)] + [
+    all_functions = [item[0] for item in inspect.getmembers(matching, inspect.isfunction)] + [
                             item[0] for item in inspect.getmembers(basic_statistics, inspect.isfunction)] + [
                             item[0] for item in inspect.getmembers(filtering, inspect.isfunction)]
     
