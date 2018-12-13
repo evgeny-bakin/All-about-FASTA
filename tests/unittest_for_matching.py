@@ -28,6 +28,9 @@ class TestMatchingFasta(unittest.TestCase):
         module_alena.subtract_sequences(fasta_test1, fasta_test2, fasta_result, 'fasta')
         counter = sum(1 for title, seq in SimpleFastaParser(open(fasta_result)))
         self.assertEqual(counter, 10)
+    
+    def tearDown(self):
+        os.remove(fasta_result)
 
 
 class TestMatchingFastq(unittest.TestCase):
@@ -44,6 +47,9 @@ class TestMatchingFastq(unittest.TestCase):
         module_alena.subtract_sequences(fastq_test1, fastq_test2, fastq_result, 'fastq')
         counter = sum(1 for title, seq, qual in FastqGeneralIterator(open(fastq_result)))
         self.assertEqual(counter, 489913)
+    
+    def tearDown(self):
+        os.remove(fastq_result)
     
     
 if __name__ == '__main__':
