@@ -3,12 +3,10 @@ import os
 import inspect
 import time
 from Bio import SeqIO
-import module_evg
-from module_evg import *
 import module_alice
 from module_alice import *
-import module_alena
-from module_alena import *
+import matching
+from matching import *
 import filtering
 from filtering import *
 
@@ -77,7 +75,7 @@ if __name__ == "__main__":
     
     all_functions = [item[0] for item in 
                             inspect.getmembers(module_evg, inspect.isfunction)] + [
-                            item[0] for item in inspect.getmembers(module_alena, inspect.isfunction)] + [
+                            item[0] for item in inspect.getmembers(matching, inspect.isfunction)] + [
                             item[0] for item in inspect.getmembers(module_alice, inspect.isfunction)] + [
                             item[0] for item in inspect.getmembers(filtering, inspect.isfunction)]
     
