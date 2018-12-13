@@ -7,8 +7,11 @@ Bioinformatics institute, Autumn-2018.
 
 ## Optional arguments
 `-i, --input         Path to fasta/fastq file
+
  -f, --function     Name of chosen function
+ 
  -p, --parameters   Desired parameters
+ 
  -o, --output       Path to output file`
 
 ## Module Filtering
