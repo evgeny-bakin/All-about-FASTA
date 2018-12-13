@@ -8,11 +8,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import progressbar as pb
+from Bio.Seq import Seq
+from Bio.Alphabet import IUPAC
+from Bio.SeqUtils import GC
 from Bio import SeqIO
+from Bio.SeqIO.QualityIO import FastqGeneralIterator
 import time
 
 
-def basic_statistics(input_file, output_mode = "quiet", output_file = "basic_statistics.csv"):
+def basic_statistics(input_file, output_mode, output_file, file_type):
 
     with open(input_file, "r"):
         read_length = [len(seq_record.seq) for seq_record in SeqIO.parse(input_file, file_type)]
@@ -41,7 +45,7 @@ def basic_statistics(input_file, output_mode = "quiet", output_file = "basic_sta
     return
 
 
-def quality_score(input_file, output_file):
+def quality_score(input_file, phred, output_file, file_type):
     start_time = time.clock()
     widgets = ['Assesment of quality score: ', pb.Percentage(), ' ',
                pb.Bar(marker=pb.RotatingMarker()), ' ', pb.ETA()]
@@ -106,36 +110,90 @@ def quality_score(input_file, output_file):
     return
 
 # the following function has been written by Alena Kizenko
-def gc_content_analysis (input_file, output_file):
-    if file_type == "fasta" or file_type == "fastq":
-        dict = {}
-        sequence = str(input_file)
-        analysis = output_file
-        my_seq = Seq(sequence, IUPAC.unambiguous_dna)
-        gc_content = GC(my_seq)
-        dict['GC-content'] = gc_content
-        print('GC content of analysed sequence is', round(gc_content, 2), '%')
-        if gc_content < 50:
-            return
-        else:
-            square = Seq(sequence).count('GG')
-            dict['Number of "GG" motifs'] = square
-            if square >= 4:
-                print('G-quadruplex structures can be found in analysed sequence!')
-                dict['3D structures occurence'] = 'TRUE'
-            else:
-                dict['3D structures occurence'] = 'FALSE'
-                return
-        with open(analysis, 'w') as csvFile:
-                result = csv.writer(csvFile, delimiter = ',')
-                for key, value in dict.items():
-                    result.writerow([key, value])
+def gc_content_analysis(input_file, parameters, output_file, file_type):
+    total_GC = 0
+    total_length = 0
+    if file_type == 'fasta':
+        if parameters == 'false':
+            with open(output_file, 'w', newline='') as csvfile:
+                fieldnames = ['Sequence_ID', 'GC-content']
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+                for title, seq in SimpleFastaParser(open(input_file)):
+                    gc_content = GC(seq)
+                    gc_content = round(gc_content, 2)
+                    total_GC += Seq(seq).count('C')
+                    total_GC += Seq(seq).count('G')
+                    total_length += len(seq)
+                    writer.writerow({'Sequence_ID': title, 'GC-content': gc_content})
+                average_GC = total_GC / total_length * 100
+                average_GC = round(average_GC, 2)
+                writer.writerow({'Sequence_ID': 'Average_GC', 'GC-content': average_GC})
 
+        elif parameters == '3d':
+            with open(output_file, 'w', newline='') as csvfile:
+                fieldnames = ['Sequence_ID', 'GC-content', '3D structures occurence']
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+                for title, seq in SimpleFastaParser(open(input_file)):
+                    gc_content = GC(seq)
+                    gc_content = round(gc_content, 2)
+                    total_GC += Seq(seq).count('C')
+                    total_GC += Seq(seq).count('G')
+                    total_length += len(seq)
+                    if gc_content > 50 and Seq(seq).count('GG') >= 4:
+                        writer.writerow(
+                            {'Sequence_ID': title, 'GC-content': gc_content, '3D structures occurence': 'TRUE'})
+                    else:
+                        writer.writerow(
+                            {'Sequence_ID': title, 'GC-content': gc_content, '3D structures occurence': 'FALSE'})
+                average_GC = total_GC / total_length * 100
+                writer.writerow({'Sequence_ID': 'Average_GC', 'GC-content': average_GC})
+
+
+    if file_type == 'fastq':
+        if parameters == 'false':
+            with open(output_file, 'w', newline='') as csvfile:
+                fieldnames = ['Sequence_ID', 'GC-content']
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+                for title, seq, qual in FastqGeneralIterator(open(input_file)):
+                    gc_content = GC(seq)
+                    gc_content = round(gc_content, 2)
+                    total_GC += Seq(seq).count('C')
+                    total_GC += Seq(seq).count('G')
+                    total_length += len(seq)
+                    writer.writerow({'Sequence_ID': title, 'GC-content': gc_content})
+                average_GC = total_GC / total_length * 100
+                average_GC = round(average_GC, 2)
+                writer.writerow({'Sequence_ID': 'Average_GC', 'GC-content': average_GC})
+        elif parameters == '3d':
+            with open(output_file, 'w', newline='') as csvfile:
+                fieldnames = ['Sequence_ID', 'GC-content', '3D_structures_occurence']
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+                for title, seq, qual in FastqGeneralIterator(open(input_file)):
+                    gc_content = GC(seq)
+                    gc_content = round(gc_content, 2)
+                    total_GC += Seq(seq).count('C')
+                    total_GC += Seq(seq).count('G')
+                    total_length += len(seq)
+                    if gc_content > 50 and Seq(seq).count('GG') >= 4:
+                        writer.writerow(
+                            {'Sequence_ID': title, 'GC-content': gc_content, '3D_structures_occurence': 'TRUE'})
+                    else:
+                        writer.writerow(
+                            {'Sequence_ID': title, 'GC-content': gc_content, '3D_structures_occurence': 'FALSE'})
+                average_GC = total_GC / total_length * 100
+                average_GC = round(average_GC, 2)
+                writer.writerow({'Sequence_ID': 'Average_GC', 'GC-content': average_GC})
+    print('GC-content scores of input sequences have been saved to {}'.format(output_file))
+    print('Average GC-content of input sequences is {}'.format(average_GC))
 
 
 # parameters(optional) should include either treshold (minimal contig length used for calculation) - one figure or metric's name(N50/NA50),genome_size and (optionally) treshold  . Example - NA50:100000:150
 
-def n50(input_file, parameters, output_file = "quality_metrics.txt"):
+def n50(input_file, parameters, output_file, file_type):
 
     metric = "N50"
     treshold = 0
@@ -174,8 +232,8 @@ def n50(input_file, parameters, output_file = "quality_metrics.txt"):
                 "{}: {}".format(metric, i),
                 file=open(output_file, "a"))
                 break
+    print("The report has been saved to {}".format(output_file))
 
-            print("The report has been saved to {}".format(output_file))
 
 
 
