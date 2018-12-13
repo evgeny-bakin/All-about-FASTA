@@ -8,15 +8,14 @@ def join_sequences(input_file, parameters, output_file, file_type):
     if file_type == 'fastq':
         print('Reading your first file...')
         print()
-        with open(input_file) as handle:
-            file1_set = {title for title, seq, qual in FastqGeneralIterator(handle)}
+        file1_set = {title for title, seq, qual in FastqGeneralIterator(open(input_file))}
         print('Reading your second file...')
         print()
-        with open(input_file) as handle2:
-            file2_set = {title for title, seq, qual in FastqGeneralIterator(handle2)}
+        file2_set = {title for title, seq, qual in FastqGeneralIterator(open(parameters))}
         print('Joining your files...')
         print()
         second_unique_set = file2_set.difference(file1_set)
+        print(len(second_unique_set))
         print('Writing joined files to a', output_file, 'file...')
         print()
         with open(output_file, 'w') as out_handle:
@@ -60,12 +59,10 @@ def overlap_sequences(input_file, parameters, output_file, file_type):
     if file_type == 'fastq':
         print('Reading your first file...')
         print()
-        with open(input_file) as handle:
-            file1_set = {title for title, seq, qual in FastqGeneralIterator(handle)}
+        file1_set = {title for title, seq, qual in FastqGeneralIterator(open(input_file))}
         print('Reading your second file...')
         print()
-        with open(input_file) as handle2:
-            file2_set = {title for title, seq, qual in FastqGeneralIterator(handle2)}
+        file2_set = {title for title, seq, qual in FastqGeneralIterator(open(parameters))}
         print('Overlapping your files...')
         print()
         overlapped_set = file2_set.intersection(file1_set)
@@ -92,7 +89,6 @@ def overlap_sequences(input_file, parameters, output_file, file_type):
         print('Overlapping your files...')
         print()
         overlapped_set = file2_set.intersection(file1_set)
-        print(overlapped_set)
         print('Writing overlapped files to a', output_file, 'file...')
         print()
         with open(output_file, 'w') as out_handle:
@@ -112,15 +108,14 @@ def subtract_sequences(input_file, parameters, output_file, file_type):
     if file_type == 'fastq':
         print('Reading your first file...')
         print()
-        with open(input_file) as handle:
-            file1_set = {title for title, seq, qual in FastqGeneralIterator(handle)}
+        file1_set = {title for title, seq, qual in FastqGeneralIterator(open(input_file))}
         print('Reading your second file...')
         print()
-        with open(input_file) as handle2:
-            file2_set = {title for title, seq, qual in FastqGeneralIterator(handle2)}
+        file2_set = {title for title, seq, qual in FastqGeneralIterator(open(parameters))}
         print('Subtracting your files...')
         print()
         subtracted_set = file2_set.symmetric_difference(file1_set)
+        print(len(subtracted_set))
         print('Writing subtracted files to a', output_file, 'file...')
         print()
         with open(output_file, 'w') as out_handle:
