@@ -15,7 +15,6 @@ def join_sequences(input_file, parameters, output_file, file_type):
         print('Joining your files...')
         print()
         second_unique_set = file2_set.difference(file1_set)
-        print(len(second_unique_set))
         print('Writing joined files to a', output_file, 'file...')
         print()
         with open(output_file, 'w') as out_handle:
@@ -115,7 +114,6 @@ def subtract_sequences(input_file, parameters, output_file, file_type):
         print('Subtracting your files...')
         print()
         subtracted_set = file2_set.symmetric_difference(file1_set)
-        print(len(subtracted_set))
         print('Writing subtracted files to a', output_file, 'file...')
         print()
         with open(output_file, 'w') as out_handle:
