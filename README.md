@@ -1,18 +1,16 @@
 # breakFAST
 Development of a tool for FASTA/FASTQ processing.
 Bioinformatics institute, Autumn-2018.
+
 ## Usage
 
 `python3 ./breakFAST.py -i <input file> -f <function> -p <parameters> -o <output_file>`
 
 ## Optional arguments
 ```bash
--i, --input         Path to fasta/fastq file
-
+ -i, --input        Path to fasta/fastq file
  -f, --function     Name of chosen function
- 
  -p, --parameters   Desired parameters
- 
  -o, --output       Path to output file
  ````
 
