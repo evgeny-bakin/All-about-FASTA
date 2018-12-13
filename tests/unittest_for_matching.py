@@ -1,6 +1,11 @@
 import unittest
 import os
-import matching
+import sys
+import inspect
+current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, parent_dir)
+import module_matching
 from Bio import SeqIO
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -15,17 +20,17 @@ fastq_result =  os.path.join(os.path.dirname(__file__), 'fastq_result.fastq')
 class TestMatchingFasta(unittest.TestCase):
     
     def test_join_fasta(self):
-        matching.join_sequences(fasta_test1, fasta_test2, fasta_result, 'fasta')
+        module_matching.join_sequences(fasta_test1, fasta_test2, fasta_result, 'fasta')
         counter = sum(1 for title, seq in SimpleFastaParser(open(fasta_result)))
         self.assertEqual(counter, 13)
         
     def test_overlap_fasta(self):
-        matching.overlap_sequences(fasta_test1, fasta_test2, fasta_result, 'fasta')
+        module_matching.overlap_sequences(fasta_test1, fasta_test2, fasta_result, 'fasta')
         counter = sum(1 for title, seq in SimpleFastaParser(open(fasta_result)))
         self.assertEqual(counter, 3)
         
     def test_subtract_fasta(self):
-        matching.subtract_sequences(fasta_test1, fasta_test2, fasta_result, 'fasta')
+        module_matching.subtract_sequences(fasta_test1, fasta_test2, fasta_result, 'fasta')
         counter = sum(1 for title, seq in SimpleFastaParser(open(fasta_result)))
         self.assertEqual(counter, 10)
     
@@ -36,15 +41,15 @@ class TestMatchingFasta(unittest.TestCase):
 class TestMatchingFastq(unittest.TestCase):
     
     def test_join_fastq(self):
-        matching.join_sequences(fastq_test1, fastq_test2, fastq_result, 'fastq')
+        module_matching.join_sequences(fastq_test1, fastq_test2, fastq_result, 'fastq')
         counter = sum(1 for title, seq, qual in FastqGeneralIterator(open(fastq_result)))
         self.assertEqual(counter, 489913)
     def test_overlap_fastq(self):
-        matching.overlap_sequences(fastq_test1, fastq_test2, fastq_result, 'fastq')
+        module_matching.overlap_sequences(fastq_test1, fastq_test2, fastq_result, 'fastq')
         counter = sum(1 for title, seq, qual in FastqGeneralIterator(open(fastq_result)))
         self.assertEqual(counter, 0)
     def test_subtract_fastq(self):
-        matching.subtract_sequences(fastq_test1, fastq_test2, fastq_result, 'fastq')
+        module_matching.subtract_sequences(fastq_test1, fastq_test2, fastq_result, 'fastq')
         counter = sum(1 for title, seq, qual in FastqGeneralIterator(open(fastq_result)))
         self.assertEqual(counter, 489913)
     

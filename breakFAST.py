@@ -2,12 +2,12 @@ import argparse
 import os
 import inspect
 from Bio import SeqIO
-import basic_statistics
-from basic_statistics import *
-import matching
-from matching import *
-import filtering
-from filtering import *
+import module_basic_statistics
+from module_basic_statistics import *
+import module_matching
+from module_matching import *
+import module_filtering
+from module_filtering import *
 
 def check_input_file(parser, file_name):
     full_file_name = os.path.abspath(file_name)
@@ -72,9 +72,9 @@ if __name__ == "__main__":
     file_type = check_file_format(args.input_file)
     print("File type is {}.".format(file_type))
     
-    all_functions = [item[0] for item in inspect.getmembers(matching, inspect.isfunction)] + [
-                            item[0] for item in inspect.getmembers(basic_statistics, inspect.isfunction)] + [
-                            item[0] for item in inspect.getmembers(filtering, inspect.isfunction)]
+    all_functions = [item[0] for item in inspect.getmembers(module_matching, inspect.isfunction)] + [
+                            item[0] for item in inspect.getmembers(module_basic_statistics, inspect.isfunction)] + [
+                            item[0] for item in inspect.getmembers(module_filtering, inspect.isfunction)]
     
     if args.output_file:
         file = open((args.output_file), "a")

@@ -5,7 +5,7 @@ import inspect
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
-import filtering
+import module_filtering
 from Bio import SeqIO
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -19,27 +19,27 @@ fastq_res = os.path.join(os.path.dirname(__file__), 'fastq_res')
 class TestFilteringFasta(unittest.TestCase):
 
     def test_fasta_min_length(self):
-        filtering.min_length(fasta_test, 1665, fasta_res, "fasta")
+        module_filtering.min_length(fasta_test, 1665, fasta_res, "fasta")
         counter = sum(1 for title, seq in SimpleFastaParser(open(fasta_res)))
         self.assertEqual(counter, 6)
 
     def test_fasta_N(self):
-        filtering.delete_N(fasta_test, 0, fasta_res, "fasta")
+        module_filtering.delete_N(fasta_test, 0, fasta_res, "fasta")
         counter = sum(1 for title, seq in SimpleFastaParser(open(fasta_res)))
         self.assertEqual(counter, 5)
 
     def test_fasta_motif(self):
-        filtering.delete_motif(fasta_test, "aaaag", fasta_res, "fasta")
+        module_filtering.delete_motif(fasta_test, "aaaag", fasta_res, "fasta")
         counter = sum(1 for title, seq in SimpleFastaParser(open(fasta_res)))
         self.assertEqual(counter, 1)
 
     def test_fasta_deduplicate(self):
-        filtering.deduplicate(fasta_test, 0, fasta_res, "fasta")
+        module_filtering.deduplicate(fasta_test, 0, fasta_res, "fasta")
         counter = sum(1 for title, seq in SimpleFastaParser(open(fasta_res)))
         self.assertEqual(counter, 4)
 
     def test_fasta_min_qual(self):
-        filtering.min_quality(fasta_test, "32:80:phred33", fasta_res, "fasta")
+        module_filtering.min_quality(fasta_test, "32:80:phred33", fasta_res, "fasta")
         self.assertFalse(os.path.exists(fasta_res))
 
     def tearDown(self):
@@ -49,27 +49,27 @@ class TestFilteringFasta(unittest.TestCase):
 class TestFilteringFastq(unittest.TestCase):
 
     def test_fastq_min_length(self):
-        filtering.min_length(fastq_test, 113, fastq_res, "fastq")
+        module_filtering.min_length(fastq_test, 113, fastq_res, "fastq")
         counter = sum(1 for title, seq, qual in FastqGeneralIterator(open(fastq_res)))
         self.assertEqual(counter, 8)
 
     def test_fastq_N(self):
-        filtering.delete_N(fastq_test, 0, fastq_res, "fastq")
+        module_filtering.delete_N(fastq_test, 0, fastq_res, "fastq")
         counter = sum(1 for title, seq, qual in FastqGeneralIterator(open(fastq_res)))
         self.assertEqual(counter, 6)
 
     def test_fastq_motif(self):
-        filtering.delete_motif(fastq_test, 'ttttg', fastq_res, "fastq")
+        module_filtering.delete_motif(fastq_test, 'ttttg', fastq_res, "fastq")
         counter = sum(1 for title, seq, qual in FastqGeneralIterator(open(fastq_res)))
         self.assertEqual(counter, 2)
 
     def test_fastq_deduplicate(self):
-        filtering.deduplicate(fastq_test, 0, fastq_res, "fastq")
+        module_filtering.deduplicate(fastq_test, 0, fastq_res, "fastq")
         counter = sum(1 for title, seq, qual in FastqGeneralIterator(open(fastq_res)))
         self.assertEqual(counter, 8)
 
     def test_fastq_qual(self):
-        filtering.min_quality(fastq_test, "32:90:phred33", fastq_res, "fastq")
+        module_filtering.min_quality(fastq_test, "32:90:phred33", fastq_res, "fastq")
         counter = sum(1 for title, seq, qual in FastqGeneralIterator(open(fastq_res)))
         self.assertEqual(counter, 6)
 

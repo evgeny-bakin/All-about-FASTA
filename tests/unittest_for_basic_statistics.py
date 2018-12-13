@@ -1,7 +1,12 @@
 import unittest
 import os
-import basic_statistics
-from basic_statistics import *
+import sys
+import inspect
+current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, parent_dir)
+import module_basic_statistics
+from module_basic_statistics import *
 from Bio import SeqIO
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -17,18 +22,18 @@ qual_graph = os.path.join(os.path.dirname(__file__), 'average_quality.png')
 
 class TestBasicStatisticsFastq(unittest.TestCase):
     def test_fastq_basic_statistics(self):
-        basic_statistics.basic_statistics(fastq_test, "verbose", fastq_stat_out, "fastq")
+        module_basic_statistics.basic_statistics(fastq_test, "verbose", fastq_stat_out, "fastq")
         counter = sum(1 for line in (open(fastq_stat_out)))
         self.assertEqual(counter, 6)
 
     def test_fastq_quality_score(self):
-        basic_statistics.quality_score(fastq_test, "phred33", fastq_out, "fastq")
+        module_basic_statistics.quality_score(fastq_test, "phred33", fastq_out, "fastq")
         counter = sum(1 for row in (open(fastq_out)))
         self.assertEqual(counter, 152)
         self.assertTrue(os.path.exists(qual_graph))
 
     def test_fastq_gc_content_analysis(self):
-        basic_statistics.gc_content_analysis(fastq_test, "3d", fastq_out, "fastq")
+        module_basic_statistics.gc_content_analysis(fastq_test, "3d", fastq_out, "fastq")
         rows = [str(row) for row in (open(fastq_out))]
         counter = len(rows)
         last_row = rows[-1]
@@ -37,7 +42,7 @@ class TestBasicStatisticsFastq(unittest.TestCase):
 
 
     def test_n50(self):
-        basic_statistics.n50(fastq_test, "150", fastq_out, "fastq")
+        module_basic_statistics.n50(fastq_test, "150", fastq_out, "fastq")
         lines = [str(line) for line in (open(fastq_out))]
         last_line = lines[-1]
         self.assertEqual(last_line, "N50: 151\n")
@@ -45,12 +50,12 @@ class TestBasicStatisticsFastq(unittest.TestCase):
 class TestBasicStatisticsFasta(unittest.TestCase):
 
     def test_fasta_basic_statistics(self):
-        basic_statistics.basic_statistics(fasta_test,  "verbose", fasta_stat_out, "fasta")
+        module_basic_statistics.basic_statistics(fasta_test,  "verbose", fasta_stat_out, "fasta")
         counter = sum(1 for line in (open(fasta_stat_out)))
         self.assertEqual(counter, 6)
 
     def test_fasta_gc_content_analysis(self):
-        basic_statistics.gc_content_analysis(fasta_test, "3d", fasta_out, "fasta")
+        module_basic_statistics.gc_content_analysis(fasta_test, "3d", fasta_out, "fasta")
         rows = [str(row) for row in (open(fasta_out))]
         counter = len(rows)
         last_row = rows[-1]
@@ -59,7 +64,7 @@ class TestBasicStatisticsFasta(unittest.TestCase):
 
 
     def test_n50(self):
-        basic_statistics.n50(fasta_test, "150", fasta_out, "fasta")
+        module_basic_statistics.n50(fasta_test, "150", fasta_out, "fasta")
         lines = [str(line) for line in (open(fasta_out))]
         last_line = lines[-1]
         counter = sum(1 for title, seq in SimpleFastaParser(open(fasta_out)))
