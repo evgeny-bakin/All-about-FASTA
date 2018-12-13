@@ -108,7 +108,7 @@ def deduplicate(input_file, parameters, output_file, file_type):
                 reads_set.remove(title)
         handle.close()
 
-    print(f"Data without duplicates are written to {output_file} \n")
+    print("Data without duplicates are written to {} \n".format(output_file))
 
     return
 
