@@ -6,10 +6,10 @@ Bioinformatics institute, Autumn-2018.
 `python3 ./breakFAST.py -i <input file> -f <function> -p <parameters> -o <output_file>`
 
 ## Optional arguments
-`-i, --input`         Path to fasta/fastq file
- `-f, --function`     Name of chosen function
- `-p, --parameters`   Desired parameters
- `-o, --output`       Path to output file
+`-i, --input         Path to fasta/fastq file
+ `-f, --function     Name of chosen function
+ `-p, --parameters   Desired parameters
+ `-o, --output       Path to output file`
 
 ## Module Filtering
 This module is developed for quick filtering of fasta/fastq files. 
