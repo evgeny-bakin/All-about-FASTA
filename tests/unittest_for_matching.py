@@ -43,7 +43,7 @@ class TestMatchingFastq(unittest.TestCase):
     def test_join_fastq(self):
         module_matching.join_sequences(fastq_test1, fastq_test2, fastq_result, 'fastq')
         counter = sum(1 for title, seq, qual in FastqGeneralIterator(open(fastq_result)))
-        self.assertEqual(counter, 489913)
+        self.assertEqual(counter, 28)
     def test_overlap_fastq(self):
         module_matching.overlap_sequences(fastq_test1, fastq_test2, fastq_result, 'fastq')
         counter = sum(1 for title, seq, qual in FastqGeneralIterator(open(fastq_result)))
@@ -51,7 +51,7 @@ class TestMatchingFastq(unittest.TestCase):
     def test_subtract_fastq(self):
         module_matching.subtract_sequences(fastq_test1, fastq_test2, fastq_result, 'fastq')
         counter = sum(1 for title, seq, qual in FastqGeneralIterator(open(fastq_result)))
-        self.assertEqual(counter, 489913)
+        self.assertEqual(counter, 28)
     
     def tearDown(self):
         os.remove(fastq_result)
