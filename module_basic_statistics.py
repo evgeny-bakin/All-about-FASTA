@@ -231,10 +231,12 @@ def n50(input_file, parameters, output_file, file_type):
             if summ >= half_length:
                 print("{}: {}".format(metric,i))
                 print("\n", "Assembly quality assessment for {}".format(input_file), "\n"
+                "Only for contigs longer than {}".format(treshold), "\n"
                 "{}: {}".format(metric, i),
                 file=open(output_file, "a"))
                 break
-    print("{}: {}".format(metric, i))
+
+    print("Only for contigs longer than {}".format(treshold))
     print("The report has been saved to {}".format(output_file))
 
 
