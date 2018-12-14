@@ -234,6 +234,7 @@ def n50(input_file, parameters, output_file, file_type):
                 "{}: {}".format(metric, i),
                 file=open(output_file, "a"))
                 break
+    print("{}: {}".format(metric, i))
     print("The report has been saved to {}".format(output_file))
 
 
