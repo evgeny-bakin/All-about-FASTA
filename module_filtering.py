@@ -1,10 +1,34 @@
 import Bio
 import re
 from Bio import SeqIO
+from Bio import Seq
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
+def extract(input_file, parameters, output_file, file_type):
+    read_id,start,stop,margin,strand = parameters.split(':')
+    start = int(start)
+    stop = int(stop)
+    margin = int(margin)    
+    
+    handle = open(output_file, "w")
+    for title, seq in SimpleFastaParser(open(input_file)):
+        if (title == read_id):
+            subseq = seq[start-1-margin:stop+margin]
+            if strand == '+':                
+                handle.write(">%s\n%s\n" % (title, subseq))
+            elif strand == '-':
+                subseq = str( Seq.Seq(subseq).reverse_complement() )
+                handle.write(">%s\n%s\n" % (title, subseq))                
+            else:
+                print('Strand is not specified correctly!)
+                return                          
+            
+    handle.close()
 
+    return
+    
+    
 def min_length(input_file, parameters, output_file, file_type):
 
     try:
